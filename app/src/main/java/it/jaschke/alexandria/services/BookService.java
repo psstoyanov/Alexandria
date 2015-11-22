@@ -48,11 +48,15 @@ public class BookService extends IntentService {
             final String action = intent.getAction();
             if (FETCH_BOOK.equals(action)) {
                 final String ean = intent.getStringExtra(EAN);
+
                 try {
                     fetchBook(ean);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
             } else if (DELETE_BOOK.equals(action)) {
                 final String ean = intent.getStringExtra(EAN);
                 deleteBook(ean);
@@ -65,8 +69,7 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void deleteBook(String ean) {
-        if (ean != null && ean.length() > 0 )
-        {
+        if (ean != null && ean.length() > 0) {
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
         }
     }
@@ -75,8 +78,7 @@ public class BookService extends IntentService {
      * Handle action fetchBook in the provided background thread with the provided
      * parameters.
      */
-    private void fetchBook(String ean) throws JSONException
-    {
+    private void fetchBook(String ean) throws JSONException, IOException {
 
         if (ean.length() != 13) {
             return;
@@ -90,8 +92,7 @@ public class BookService extends IntentService {
                 null  // sort order
         );
 
-        if (bookEntry.getCount() > 0)
-        {
+        if (bookEntry.getCount() > 0) {
             bookEntry.close();
             return;
         }
@@ -135,10 +136,10 @@ public class BookService extends IntentService {
                 return;
             }
             bookJsonString = buffer.toString();
+            getBookDataFromJson(bookJsonString, ean);
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
-        }
-        finally {
+        } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -152,6 +153,12 @@ public class BookService extends IntentService {
 
         }
 
+
+    }
+
+    private void getBookDataFromJson(String bookJsonString, String ean)
+            throws JSONException
+    {
         final String ITEMS = "items";
 
         final String VOLUME_INFO = "volumeInfo";
@@ -206,7 +213,8 @@ public class BookService extends IntentService {
             }
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
         }
     }
 
