@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import it.jaschke.alexandria.Utils.Utility;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
@@ -142,13 +143,11 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             public void onClick(View view) {
 
 
-
-                    Intent bookIntent = new Intent(getActivity(), BookService.class);
-                    bookIntent.putExtra(BookService.EAN, ean.getText().toString());
-                    bookIntent.setAction(BookService.DELETE_BOOK);
-                    getActivity().startService(bookIntent);
-                    ean.setText("");
-
+                Intent bookIntent = new Intent(getActivity(), BookService.class);
+                bookIntent.putExtra(BookService.EAN, ean.getText().toString());
+                bookIntent.setAction(BookService.DELETE_BOOK);
+                getActivity().startService(bookIntent);
+                ean.setText("");
 
 
             }
@@ -186,7 +185,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
-        if (!data.moveToFirst()) {
+        if (!data.moveToFirst())
+        {
+            updateEmptyView();
             return;
         }
 
@@ -237,6 +238,19 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             rootView.findViewById(R.id.delete_button).setVisibility(View.INVISIBLE);
         }
 
+    }
+
+    private void updateEmptyView()
+    {
+        if (!Utility.isNetworkAvailable(getActivity()) )
+        {
+            Context context = getActivity();
+            int text = R.string.empty_add_book_list_no_network;
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
     }
 
     @Override
