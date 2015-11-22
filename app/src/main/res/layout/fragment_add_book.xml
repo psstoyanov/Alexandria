@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/bookTitle"
             android:textSize="@dimen/head_line"
-            android:textIsSelectable="true"
             android:textStyle="bold"
             android:layout_marginTop="25dp"
             android:paddingRight="20dp"
@@ -118,7 +117,7 @@
                 android:layout_weight="1"
                 android:id="@+id/save_button"
                 android:visibility="invisible"
-                android:drawableLeft="@drawable/ic_send_black_24dp"
+                android:drawableRight="@drawable/ic_send_black_24dp"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_gravity="bottom"
                 />

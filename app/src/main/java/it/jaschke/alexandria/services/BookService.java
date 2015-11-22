@@ -65,7 +65,8 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void deleteBook(String ean) {
-        if (ean != null) {
+        if (ean != null && ean.length() > 0 )
+        {
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
         }
     }
@@ -193,6 +194,7 @@ public class BookService extends IntentService {
             if (bookInfo.has(IMG_URL_PATH) && bookInfo.getJSONObject(IMG_URL_PATH).has(IMG_URL)) {
                 imgUrl = bookInfo.getJSONObject(IMG_URL_PATH).getString(IMG_URL);
             }
+
 
             writeBackBook(ean, title, subtitle, desc, imgUrl);
 
