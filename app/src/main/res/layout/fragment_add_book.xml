@@ -107,7 +107,7 @@
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/delete_button"
-                android:drawableLeft="@drawable/ic_action_discard"
+                android:drawableLeft="@drawable/ic_undo_black_24dp"
                 android:visibility="invisible"
                 />
 
@@ -115,10 +115,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:text="@string/ok_button"
-                android:visibility="invisible"
                 android:layout_weight="1"
                 android:id="@+id/save_button"
-                android:drawableLeft="@drawable/ic_action_accept"
+                android:visibility="invisible"
+                android:drawableLeft="@drawable/ic_send_black_24dp"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_gravity="bottom"
                 />
