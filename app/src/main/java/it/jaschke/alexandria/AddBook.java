@@ -16,6 +16,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import it.jaschke.alexandria.Barcode.BarcodeCaptureActivity;
 import it.jaschke.alexandria.Utils.Utility;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
@@ -44,8 +46,18 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
 
+    // Barcode scanner variables.
+    private CompoundButton autoFocus;
+    private CompoundButton useFlash;
+    private TextView statusMessage;
+    private TextView barcodeValue;
+
+
     // intent request code to handle updating play services if needed.
+    private static final int RC_BARCODE_CAPTURE = 9001;
     private static final int RC_HANDLE_GMS = 9001;
+
+
 
 
     public AddBook() {
@@ -65,14 +77,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        // check that the device has play services available.
-        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
-                getActivity().getApplicationContext());
-        if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg =
-                    GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), code, RC_HANDLE_GMS);
-            dlg.show();
-        }
+
         getActivity().setTitle(R.string.scan);
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
@@ -150,6 +155,31 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
             }
         });
+
+        statusMessage = (TextView) rootView.findViewById(R.id.status_message);
+        //barcodeValue = (TextView)rootView.findViewById(R.id.barcode_value);
+
+        autoFocus = (CompoundButton) rootView.findViewById(R.id.auto_focus);
+        useFlash = (CompoundButton) rootView.findViewById(R.id.use_flash);
+
+        //rootView.findViewById(R.id.scan_button).setOnClickListener(this);
+
+        rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+
+
+                // launch barcode activity.
+                Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
+                intent.putExtra(BarcodeCaptureActivity.AutoFocus, autoFocus.isChecked());
+                intent.putExtra(BarcodeCaptureActivity.UseFlash, useFlash.isChecked());
+
+                startActivityForResult(intent, RC_BARCODE_CAPTURE);
+
+            }
+        });
+
 
         if (savedInstanceState != null) {
             ean.setText(savedInstanceState.getString(EAN_CONTENT));

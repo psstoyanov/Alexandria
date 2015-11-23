@@ -31,6 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Barcode.BarcodeCaptureActivity"
+            android:label="Read Barcode"/>
         <activity
             android:label="@string/title_activity_settings"
             android:name=".SettingsActivity"
