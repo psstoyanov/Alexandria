@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -71,8 +72,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             Dialog dlg =
                     GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), code, RC_HANDLE_GMS);
             dlg.show();
-        } else {
-            Log.d(TAG, "ura");
         }
         getActivity().setTitle(R.string.scan);
 
@@ -99,7 +98,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 }
                 if (ean.length() < 13) {
                     clearFields();
-                    Log.d(TAG, "clearFields?");
                     return;
                 }
                 //Once we have an ISBN, start a book intent
@@ -211,7 +209,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
             rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
         }
-
+//        rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
+//        ImageView bookcCover = (ImageView) rootView.findViewById(R.id.bookCover);
+//        Glide.with(this)
+//                .load(imgUrl).into(bookcCover);
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
         ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
 
