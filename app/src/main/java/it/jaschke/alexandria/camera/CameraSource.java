@@ -303,7 +303,8 @@ public class CameraSource {
      * Camera.Parameters#FOCUS_MODE_CONTINUOUS_PICTURE}. Applications can show
      * autofocus animation based on this.</p>
      */
-    public interface AutoFocusMoveCallback {
+    public interface AutoFocusMoveCallback
+    {
         /**
          * Called when the camera auto focus starts or stops.
          *
@@ -333,7 +334,8 @@ public class CameraSource {
      * @throws IOException if the camera's preview texture or display could not be initialized
      */
     @RequiresPermission(Manifest.permission.CAMERA)
-    public CameraSource start() throws IOException {
+    public CameraSource start() throws IOException
+    {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 return this;
@@ -535,11 +537,16 @@ public class CameraSource {
         synchronized (mCameraLock) {
             if (mCamera != null && mode != null) {
                 Camera.Parameters parameters = mCamera.getParameters();
-                if (parameters.getSupportedFocusModes().contains(mode)) {
+                if (parameters.getSupportedFocusModes().contains(mode))
+                {
                     parameters.setFocusMode(mode);
                     mCamera.setParameters(parameters);
                     mFocusMode = mode;
                     return true;
+                }
+                else
+                {
+                    Log.w(TAG, "Autofocus is not supported");
                 }
             }
 
@@ -580,6 +587,10 @@ public class CameraSource {
                     mCamera.setParameters(parameters);
                     mFlashMode = mode;
                     return true;
+                }
+                else
+                {
+                    Log.w(TAG, "Flash is not supported");
                 }
             }
 
@@ -785,8 +796,6 @@ public class CameraSource {
             if (parameters.getSupportedFlashModes().contains(
                     mFlashMode)) {
                 parameters.setFlashMode(mFlashMode);
-            } else {
-                Log.i(TAG, "Camera flash mode: " + mFlashMode + " is not supported on this device.");
             }
         }
 

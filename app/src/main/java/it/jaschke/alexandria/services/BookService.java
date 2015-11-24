@@ -212,6 +212,8 @@ public class BookService extends IntentService {
                 writeBackCategories(ean, bookInfo.getJSONArray(CATEGORIES));
             }
 
+
+
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -226,6 +228,10 @@ public class BookService extends IntentService {
         values.put(AlexandriaContract.BookEntry.SUBTITLE, subtitle);
         values.put(AlexandriaContract.BookEntry.DESC, desc);
         getContentResolver().insert(AlexandriaContract.BookEntry.CONTENT_URI, values);
+
+        Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+        messageIntent.putExtra(MainActivity.MESSAGE_KEY, title + " " + getResources().getString(R.string.book_added));
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
     }
 
     private void writeBackAuthors(String ean, JSONArray jsonArray) throws JSONException {

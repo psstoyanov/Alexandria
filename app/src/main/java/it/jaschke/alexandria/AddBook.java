@@ -26,6 +26,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 
 import it.jaschke.alexandria.Barcode.BarcodeCaptureActivity;
 import it.jaschke.alexandria.Utils.Utility;
@@ -156,6 +158,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
+        Utility.hasCamera(getContext());
+        Utility.hasAutoFocus(getContext());
+        Utility.hasFlash(getContext());
+
         statusMessage = (TextView) rootView.findViewById(R.id.status_message);
         //barcodeValue = (TextView)rootView.findViewById(R.id.barcode_value);
 
@@ -228,10 +234,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
         //To remove the printl null pointer exception, add ""+ msg*
-        Log.d(TAG, "Error: " + authors);
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
+        Log.d(TAG, "Error authors: " + authors);
+        if (authors!= null && authors.length() > 0 )
+        {
+            String[] authorsArr = authors.split(",");
+            ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
+        }
+
 
 
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
@@ -255,6 +265,30 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
 
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    statusMessage.setText(R.string.barcode_success);
+                    ean.setText(barcode.displayValue);
+                    Log.d(TAG, "Barcode read: " + barcode.displayValue);
+                } else {
+                    statusMessage.setText(R.string.barcode_failure);
+                    Log.d(TAG, "No barcode captured, intent data is null");
+                }
+            } else {
+                statusMessage.setText(String.format(getString(R.string.barcode_error),
+                        CommonStatusCodes.getStatusCodeString(resultCode)));
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
 
     private void clearFields() {
         TextView bookTitle = (TextView) rootView.findViewById(R.id.bookTitle);
