@@ -138,7 +138,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:text="@string/cancel_button"
+                android:text="@string/remove_button"
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/delete_button"

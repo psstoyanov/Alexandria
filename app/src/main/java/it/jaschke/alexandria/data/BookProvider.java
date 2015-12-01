@@ -271,7 +271,8 @@ public class BookProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         // Because a null deletes all rows
-        if (selection == null || rowsDeleted != 0) {
+        if (selection == null || rowsDeleted != 0)
+        {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;

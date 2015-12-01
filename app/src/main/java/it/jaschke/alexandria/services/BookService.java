@@ -2,11 +2,13 @@ package it.jaschke.alexandria.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,9 +70,16 @@ public class BookService extends IntentService {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private void deleteBook(String ean) {
-        if (ean != null && ean.length() > 0) {
+    private void deleteBook(String ean)
+    {
+
+        if (ean != null && ean.length() > 0)
+        {
+
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.book_removed));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
         }
     }
 

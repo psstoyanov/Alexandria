@@ -133,7 +133,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     @Override
-    public void onItemSelected(String ean) {
+    public void onItemSelected(String ean)
+    {
         Bundle args = new Bundle();
         args.putString(BookDetail.EAN_KEY, ean);
 
@@ -141,7 +142,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         fragment.setArguments(args);
 
         int id = R.id.container;
-        if(findViewById(R.id.right_container) != null){
+        if(findViewById(R.id.right_container) != null)
+        {
             id = R.id.right_container;
         }
         getSupportFragmentManager().beginTransaction()
@@ -160,7 +162,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
     }
 
-    public void goBack(View view){
+    public void goBack(View view)
+    {
         getSupportFragmentManager().popBackStack();
     }
 
@@ -172,7 +175,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount()<2){
+        if(getSupportFragmentManager().getBackStackEntryCount()<2)
+        {
             finish();
         }
         super.onBackPressed();

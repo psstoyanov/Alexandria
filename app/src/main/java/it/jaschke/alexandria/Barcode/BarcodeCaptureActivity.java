@@ -163,7 +163,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
      * Creates and starts the camera.  Note that this uses a higher resolution in comparison
      * to other detection examples to enable the barcode detector to detect small barcodes
      * at long distances.
-     *
+     * <p/>
      * Suppressing InlinedApi since there is a check that the minimum version is met before using
      * the constant.
      */
@@ -175,7 +175,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         // is set to receive the barcode detection results, track the barcodes, and maintain
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).setBarcodeFormats(Barcode.EAN_13).build();
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).setBarcodeFormats(Barcode.EAN_13 ).build();
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
         barcodeDetector.setProcessor(
                 new MultiProcessor.Builder<>(barcodeFactory).build());
@@ -206,10 +206,11 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         // Creates and starts the camera.  Note that this uses a higher resolution in comparison
         // to other detection examples to enable the barcode detector to detect small barcodes
         // at long distances.
+
         CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1600, 1024)
-                .setRequestedFps(15.0f);
+                .setRequestedPreviewSize(1600, 720)
+                .setRequestedFps(60.0f);
 
         // make sure that auto focus is an available option
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -283,7 +284,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // we have permission, so create the camerasource
-            boolean autoFocus = getIntent().getBooleanExtra(AutoFocus,false);
+            boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
             boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
             createCameraSource(autoFocus, useFlash);
             return;
@@ -314,10 +315,14 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 getApplicationContext());
-        if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg =
-                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
-            dlg.show();
+        try {
+            if (code != ConnectionResult.SUCCESS) {
+                Dialog dlg =
+                        GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
+                dlg.show();
+            }
+        } catch (Exception e) {
+            Log.e("Error:GPlayServiceUtil:", "" + e);
         }
 
         if (mCameraSource != null) {
@@ -351,12 +356,10 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
                 data.putExtra(BarcodeObject, barcode);
                 setResult(CommonStatusCodes.SUCCESS, data);
                 finish();
-            }
-            else {
+            } else {
                 Log.d(TAG, "barcode data is null");
             }
-        }
-        else {
+        } else {
             Log.d(TAG, "no barcode detected");
         }
         return barcode != null;

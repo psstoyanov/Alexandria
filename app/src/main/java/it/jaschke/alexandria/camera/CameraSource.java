@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.jaschke.alexandria.Utils.Utility;
+
 // Note: This requires Google Play Services 8.1 or higher, due to using indirect byte buffers for
 // storing images.
 
@@ -792,7 +794,7 @@ public class CameraSource {
         // setting mFocusMode to the one set in the params
         mFocusMode = parameters.getFocusMode();
 
-        if (mFlashMode != null) {
+        if (Utility.hasFlash(this.mContext) && mFlashMode != null) {
             if (parameters.getSupportedFlashModes().contains(
                     mFlashMode)) {
                 parameters.setFlashMode(mFlashMode);

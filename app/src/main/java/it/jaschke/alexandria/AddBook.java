@@ -70,7 +70,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         super.onSaveInstanceState(outState);
         if (ean != null) {
             outState.putString(EAN_CONTENT, ean.getText().toString());
-
         }
         super.onSaveInstanceState(outState);
 
@@ -104,7 +103,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     ean = "978" + ean;
                 }
                 if (ean.length() < 13) {
-                    clearFields();
+                    //clearFields();
                     return;
                 }
                 //Once we have an ISBN, start a book intent
@@ -116,44 +115,31 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
-        rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // This is the callback method that the system will invoke when your button is
-                // clicked. You might do this by launching another app or by including the
-                //functionality directly in this app.
-                // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
-                // are using an external app.
-                //when you're done, remove the toast below.
-                Context context = getActivity();
-                CharSequence text = "This button should let you scan a book for its barcode!";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-
-            }
-        });
 
 
         rootView.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                clearFields();
                 ean.setText("");
             }
         });
 
-        rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view) {
 
-
+                String eanToRemove = ean.getText().toString();
+                if (eanToRemove.length() == 10 && !eanToRemove.startsWith("978")) {
+                    eanToRemove = "978" + eanToRemove;
+                }
+                clearFields();
+                ean.setText("");
                 Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean.getText().toString());
+                bookIntent.putExtra(BookService.EAN, eanToRemove);
                 bookIntent.setAction(BookService.DELETE_BOOK);
                 getActivity().startService(bookIntent);
-                ean.setText("");
-
 
             }
         });
@@ -163,12 +149,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         Utility.hasFlash(getContext());
 
         statusMessage = (TextView) rootView.findViewById(R.id.status_message);
-        //barcodeValue = (TextView)rootView.findViewById(R.id.barcode_value);
 
         autoFocus = (CompoundButton) rootView.findViewById(R.id.auto_focus);
         useFlash = (CompoundButton) rootView.findViewById(R.id.use_flash);
 
-        //rootView.findViewById(R.id.scan_button).setOnClickListener(this);
 
         rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,7 +160,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             {
 
 
-                // launch barcode activity.
+                // Launch barcode activity.
                 Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
                 intent.putExtra(BarcodeCaptureActivity.AutoFocus, autoFocus.isChecked());
                 intent.putExtra(BarcodeCaptureActivity.UseFlash, useFlash.isChecked());
@@ -233,7 +217,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        //To remove the printl null pointer exception, add ""+ msg*
+        // To remove the printl null pointer exception, add ""+ msg*
+        // check if the string is not null or it's length is greater than zero.
         Log.d(TAG, "Error authors: " + authors);
         if (authors!= null && authors.length() > 0 )
         {
@@ -249,10 +234,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
             rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
         }
-//        rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
-//        ImageView bookcCover = (ImageView) rootView.findViewById(R.id.bookCover);
-//        Glide.with(this)
-//                .load(imgUrl).into(bookcCover);
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
         ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
 
@@ -267,6 +248,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // This code comes from Mobile Vision API.
         if (requestCode == RC_BARCODE_CAPTURE) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
@@ -290,10 +273,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
 
 
+    // Clear the fields when appropriate.
     private void clearFields() {
         TextView bookTitle = (TextView) rootView.findViewById(R.id.bookTitle);
 
-        if (bookTitle == null) {
+
+        if (bookTitle == null || bookTitle.getText().toString().length() > 0)
+        {
             ((TextView) rootView.findViewById(R.id.bookTitle)).setText("");
             ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText("");
             ((TextView) rootView.findViewById(R.id.authors)).setText("");
@@ -305,6 +291,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     }
 
+    // Show the toast when there is no network.
     private void updateEmptyView()
     {
         if (!Utility.isNetworkAvailable(getActivity()) )
