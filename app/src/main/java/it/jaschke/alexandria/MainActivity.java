@@ -25,6 +25,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
+    // TODO: fix the nav drawer to display hamburger button
     private NavigationDrawerFragment navigationDrawerFragment;
 
     /**
