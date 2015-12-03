@@ -209,7 +209,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
 
         CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1600, 720)
+                .setRequestedPreviewSize(1600, 1080)
                 .setRequestedFps(60.0f);
 
         // make sure that auto focus is an available option
@@ -427,4 +427,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
             mCameraSource.doZoom(detector.getScaleFactor());
         }
     }
+
+
 }

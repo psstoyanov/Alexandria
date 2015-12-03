@@ -65,25 +65,38 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment nextFragment;
+        boolean addToBackStack;
 
         switch (position){
             default:
             case 0:
                 nextFragment = new ListOfBooks();
+                addToBackStack = false;
                 break;
             case 1:
                 nextFragment = new AddBook();
+                addToBackStack = false;
                 break;
             case 2:
                 nextFragment = new About();
+                addToBackStack = true;
                 break;
 
         }
 
+        if (addToBackStack)
+        {
         fragmentManager.beginTransaction()
                 .replace(R.id.container, nextFragment)
                 .addToBackStack((String) title)
                 .commit();
+        }
+        else
+        {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, nextFragment)
+                    .commit();
+        }
     }
 
     public void setTitle(int titleId) {
@@ -155,7 +168,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private class MessageReciever extends BroadcastReceiver {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent)
+        {
             if(intent.getStringExtra(MESSAGE_KEY)!=null){
                 Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY), Toast.LENGTH_LONG).show();
             }
@@ -173,14 +187,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    @Override
-    public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount()<2)
-        {
-            finish();
-        }
-        super.onBackPressed();
-    }
+    // Not elegant solution but it removes the inconsistencies
+    // that plagued the back button for tablet mode.
+//    @Override
+//    public void onBackPressed() {
+//        if(getSupportFragmentManager().getBackStackEntryCount()>0)
+//        {
+//            finish();
+//        }
+//        super.onBackPressed();
+//    }
 
     protected void onResume() {
         super.onResume();

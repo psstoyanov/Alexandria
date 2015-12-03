@@ -15,6 +15,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/barcode_header"
             android:id="@+id/status_message"
+            android:gravity="center_horizontal"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_centerHorizontal="true" />
@@ -24,6 +25,7 @@
             android:layout_height="wrap_content"
             android:text="@string/auto_focus"
             android:id="@+id/auto_focus"
+            android:visibility="invisible"
             android:layout_below="@+id/status_message"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -34,6 +36,7 @@
             android:layout_height="wrap_content"
             android:text="@string/use_flash"
             android:id="@+id/use_flash"
+            android:visibility="invisible"
             android:checked="false"
             android:layout_alignTop="@+id/auto_focus"
             android:layout_alignRight="@+id/eancontainer"
@@ -61,13 +64,17 @@
                 android:saveEnabled="true"
                 android:maxLength="@integer/ean_size"
                 android:maxLines="1"
+                android:layout_weight="1"
                 android:hint="@string/input_hint"
-                android:paddingRight="20dp"/>
+                android:paddingRight="20dp"
+                android:layout_gravity="center_horizontal" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/scan_button"
+                android:layout_weight="1"
+                android:visibility="invisible"
                 android:id="@+id/scan_button"/>
 
         </LinearLayout>

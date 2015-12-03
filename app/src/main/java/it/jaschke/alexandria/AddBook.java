@@ -1,7 +1,6 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,9 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 
@@ -62,6 +58,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
 
 
+
+
     public AddBook() {
     }
 
@@ -83,6 +81,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         ean = (EditText) rootView.findViewById(R.id.ean);
+
+
 
         ean.addTextChangedListener(new TextWatcher() {
             @Override
@@ -144,7 +144,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
-        Utility.hasCamera(getContext());
+
         Utility.hasAutoFocus(getContext());
         Utility.hasFlash(getContext());
 
@@ -154,6 +154,15 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         useFlash = (CompoundButton) rootView.findViewById(R.id.use_flash);
 
 
+        if(Utility.hasCamera(getContext()))
+        {
+            rootView.findViewById(R.id.scan_button).setVisibility(View.VISIBLE);
+            if (Utility.hasFlash(getContext()))
+            {
+                useFlash.setVisibility(View.VISIBLE);
+            }
+        }
+
         rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -162,7 +171,11 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
                 // Launch barcode activity.
                 Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
-                intent.putExtra(BarcodeCaptureActivity.AutoFocus, autoFocus.isChecked());
+                if (Utility.hasAutoFocus(getContext()))
+                {
+                    intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
+                }
+                //intent.putExtra(BarcodeCaptureActivity.AutoFocus, autoFocus.isChecked());
                 intent.putExtra(BarcodeCaptureActivity.UseFlash, useFlash.isChecked());
 
                 startActivityForResult(intent, RC_BARCODE_CAPTURE);
@@ -305,9 +318,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
     }
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
     }
+
+
 }
