@@ -59,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:imeOptions="actionSend|flagNoEnterAction"
                 android:minEms="@integer/ean_width"
                 android:id="@+id/ean"
                 android:saveEnabled="true"
